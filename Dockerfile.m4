@@ -34,8 +34,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		libuv1-dev \
 		libxml2-dev \
 		pkgconf \
-		tzdata \
-	&& rm -rf /var/lib/apt/lists/*
+		tzdata
 
 # Build dnsperf and resperf
 ARG DNSPERF_TREEISH=v2.3.2
