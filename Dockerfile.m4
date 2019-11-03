@@ -4,7 +4,7 @@ m4_changequote([[, ]])
 ## "build" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/debian:buster]], [[FROM docker.io/debian:buster]]) AS build
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/debian:10]], [[FROM docker.io/debian:10]]) AS build
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectormolinero/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Install system packages
@@ -68,7 +68,7 @@ RUN file /usr/bin/flamethrower
 ## "base" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/debian:buster]], [[FROM docker.io/debian:buster]]) AS base
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/debian:10]], [[FROM docker.io/debian:10]]) AS base
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectormolinero/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Install system packages
