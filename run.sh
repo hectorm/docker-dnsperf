@@ -18,4 +18,4 @@ if ! imageExists "${IMAGE_NAME:?}" && ! imageExists "${IMAGE_NAME#docker.io/}"; 
 	exit 1
 fi
 
-exec docker run -it --network host --rm "${IMAGE_NAME:?}" "$@"
+exec "${DOCKER:?}" run -it --network host --rm "${IMAGE_NAME:?}" "$@"
