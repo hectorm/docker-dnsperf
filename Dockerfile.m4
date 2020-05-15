@@ -37,7 +37,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		tzdata
 
 # Build dnsperf and resperf
-ARG DNSPERF_TREEISH=v2.3.3
+ARG DNSPERF_TREEISH=v2.3.4
 ARG DNSPERF_REMOTE=https://github.com/DNS-OARC/dnsperf.git
 WORKDIR /tmp/dnsperf/
 RUN git clone "${DNSPERF_REMOTE:?}" ./
