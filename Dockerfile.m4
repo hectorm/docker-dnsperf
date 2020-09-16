@@ -4,7 +4,7 @@ m4_changequote([[, ]])
 ## "build" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/debian:10]], [[FROM docker.io/debian:10]]) AS build
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:20.04]], [[FROM docker.io/ubuntu:20.04]]) AS build
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectormolinero/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Install system packages
@@ -15,7 +15,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		automake \
 		build-essential \
 		ca-certificates \
-		cmake \
+		devscripts \
 		file \
 		git \
 		gnuplot \
@@ -35,6 +35,19 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		libxml2-dev \
 		pkgconf \
 		tzdata
+
+# Build CMake with "_FILE_OFFSET_BITS=64"
+# (as a workaround for: https://gitlab.kitware.com/cmake/cmake/-/issues/20568)
+WORKDIR /tmp/
+RUN DEBIAN_FRONTEND=noninteractive apt-get build-dep -y cmake
+RUN apt-get source cmake && mv ./cmake-*/ ./cmake/
+WORKDIR /tmp/cmake/
+RUN DEB_BUILD_PROFILES='stage1' \
+	DEB_BUILD_OPTIONS='parallel=auto nocheck' \
+	DEB_CFLAGS_SET='-D _FILE_OFFSET_BITS=64' \
+	DEB_CXXFLAGS_SET='-D _FILE_OFFSET_BITS=64' \
+	debuild -b -uc -us
+RUN dpkg -i /tmp/cmake_*.deb /tmp/cmake-data_*.deb
 
 # Build dnsperf and resperf
 ARG DNSPERF_TREEISH=v2.3.4
@@ -68,7 +81,7 @@ RUN file /usr/bin/flamethrower
 ## "base" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/debian:10]], [[FROM docker.io/debian:10]]) AS base
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:20.04]], [[FROM docker.io/ubuntu:20.04]]) AS base
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectormolinero/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Install system packages
@@ -76,17 +89,18 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		ca-certificates \
+		curl \
 		gnuplot \
 		knot-dnsutils \
 		libbind9-161 \
 		libcap2 \
-		libdns1104 \
+		libdns1109 \
 		libfstrm0 \
 		libgeoip1 \
 		libgnutls30 \
-		libisc1100 \
+		libisc1105 \
 		libisccfg163 \
-		libjson-c3 \
+		libjson-c4 \
 		libkrb5-3 \
 		libldns2 \
 		liblmdb0 \
@@ -95,7 +109,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		libuv1 \
 		libxml2 \
 		tzdata \
-		wget \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Create users and groups
@@ -125,7 +138,7 @@ WORKDIR /home/dnsperf/
 # Download sample query file
 ARG QUERYFILE_EXAMPLE_URL=https://www.dns-oarc.net/files/dnsperf/data/queryfile-example-current.gz
 ARG QUERYFILE_EXAMPLE_CHECKSUM=4102f3197d5cc762ad51ee95f74b0330ddf60e922c9124f037f092f72774e603
-RUN wget -O ./queryfile-example.gz "${QUERYFILE_EXAMPLE_URL:?}" \
+RUN curl -Lo ./queryfile-example.gz "${QUERYFILE_EXAMPLE_URL:?}" \
 	&& printf '%s' "${QUERYFILE_EXAMPLE_CHECKSUM:?}  ./queryfile-example.gz" | sha256sum -c \
 	&& gunzip ./queryfile-example.gz
 
