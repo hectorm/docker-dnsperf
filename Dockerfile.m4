@@ -65,7 +65,7 @@ RUN file /usr/bin/resperf
 RUN file /usr/bin/resperf-report
 
 # Build flamethrower
-ARG FLAMETHROWER_TREEISH=v0.10.2
+ARG FLAMETHROWER_TREEISH=v0.11.0
 ARG FLAMETHROWER_REMOTE=https://github.com/DNS-OARC/flamethrower.git
 WORKDIR /tmp/flamethrower/
 RUN git clone "${FLAMETHROWER_REMOTE:?}" ./
