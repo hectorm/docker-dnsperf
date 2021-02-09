@@ -50,7 +50,7 @@ RUN DEB_BUILD_PROFILES='stage1' \
 RUN dpkg -i /tmp/cmake_*.deb /tmp/cmake-data_*.deb
 
 # Build dnsperf and resperf
-ARG DNSPERF_TREEISH=v2.4.0
+ARG DNSPERF_TREEISH=v2.4.1
 ARG DNSPERF_REMOTE=https://github.com/DNS-OARC/dnsperf.git
 WORKDIR /tmp/dnsperf/
 RUN git clone "${DNSPERF_REMOTE:?}" ./
