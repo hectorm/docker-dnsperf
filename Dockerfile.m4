@@ -21,6 +21,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		git \
 		gnuplot \
 		libcap-dev \
+		libck-dev \
 		libfstrm-dev \
 		libgeoip-dev \
 		libgnutls28-dev \
@@ -50,7 +51,7 @@ RUN DEB_BUILD_PROFILES='stage1' \
 RUN dpkg -i /tmp/cmake_*.deb /tmp/cmake-data_*.deb
 
 # Build dnsperf and resperf
-ARG DNSPERF_TREEISH=v2.4.2
+ARG DNSPERF_TREEISH=v2.5.0
 ARG DNSPERF_REMOTE=https://github.com/DNS-OARC/dnsperf.git
 WORKDIR /tmp/dnsperf/
 RUN git clone "${DNSPERF_REMOTE:?}" ./
@@ -94,6 +95,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		knot-dnsutils \
 		libbind9-161 \
 		libcap2 \
+		libck0 \
 		libdns1109 \
 		libfstrm0 \
 		libgeoip1 \
