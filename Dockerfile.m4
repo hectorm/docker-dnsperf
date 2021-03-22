@@ -51,7 +51,7 @@ RUN DEB_BUILD_PROFILES='stage1' \
 RUN dpkg -i /tmp/cmake_*.deb /tmp/cmake-data_*.deb
 
 # Build dnsperf and resperf
-ARG DNSPERF_TREEISH=v2.5.0
+ARG DNSPERF_TREEISH=v2.5.1
 ARG DNSPERF_REMOTE=https://github.com/DNS-OARC/dnsperf.git
 WORKDIR /tmp/dnsperf/
 RUN git clone "${DNSPERF_REMOTE:?}" ./
@@ -76,7 +76,7 @@ WORKDIR /tmp/flamethrower/build/
 RUN cmake ../
 RUN make -j"$(nproc)"
 RUN mv ./flame /usr/bin/flame
-RUN file /usr/bin/flamethrower
+RUN file /usr/bin/flame
 
 ##################################################
 ## "base" stage
