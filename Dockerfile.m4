@@ -29,6 +29,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		libkrb5-dev \
 		libldns-dev \
 		liblmdb-dev \
+		libnghttp2-dev \
 		libprotobuf-c-dev \
 		libssl-dev \
 		libtool \
@@ -106,6 +107,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		libkrb5-3 \
 		libldns2 \
 		liblmdb0 \
+		libnghttp2-14 \
 		libprotobuf-c1 \
 		libssl1.1 \
 		libuv1 \
