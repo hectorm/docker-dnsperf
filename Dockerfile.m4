@@ -139,12 +139,8 @@ COPY --from=build --chown=root:root /usr/bin/flame /usr/bin/flame
 USER dnsperf:dnsperf
 WORKDIR /home/dnsperf/
 
-# Download sample query file
-ARG QUERYFILE_EXAMPLE_URL=https://www.dns-oarc.net/files/dnsperf/data/queryfile-example-current.gz
-ARG QUERYFILE_EXAMPLE_CHECKSUM=4102f3197d5cc762ad51ee95f74b0330ddf60e922c9124f037f092f72774e603
-RUN curl -Lo ./queryfile-example.gz "${QUERYFILE_EXAMPLE_URL:?}" \
-	&& printf '%s' "${QUERYFILE_EXAMPLE_CHECKSUM:?}  ./queryfile-example.gz" | sha256sum -c \
-	&& gunzip ./queryfile-example.gz
+# Add sample query file
+ADD ./data/queryfile-example.tar.xz /home/dnsperf/
 
 ##################################################
 ## "test" stage
