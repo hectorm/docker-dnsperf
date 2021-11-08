@@ -160,7 +160,10 @@ RUN flame -l 5 -Q 5 -P tcp    -p  53 8.8.8.8
 RUN flame -l 5 -Q 5 -P tcptls -p 853 8.8.8.8
 
 ##################################################
-## "dnsperf" stage
+## "main" stage
 ##################################################
 
-FROM base AS dnsperf
+FROM base AS main
+
+# Dummy instruction so BuildKit does not skip the test stage
+RUN --mount=type=bind,from=test,source=/mnt/,target=/mnt/
