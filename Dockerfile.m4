@@ -36,7 +36,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		libuv1-dev \
 		libxml2-dev \
 		pkgconf \
-		tzdata
+		tzdata \
+	&& rm -rf /var/lib/apt/lists/*
 
 # Build CMake with "_FILE_OFFSET_BITS=64"
 # (as a workaround for: https://gitlab.kitware.com/cmake/cmake/-/issues/20568)
