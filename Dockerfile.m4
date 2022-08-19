@@ -138,15 +138,15 @@ ADD ./data/queryfile-example.tar.xz /home/dnsperf/
 FROM base AS test
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
-RUN dnsperf -l 5 -Q 5 -m udp -p  53 -d ./queryfile-example -s 8.8.8.8
-RUN dnsperf -l 5 -Q 5 -m tcp -p  53 -d ./queryfile-example -s 8.8.8.8
-RUN dnsperf -l 5 -Q 5 -m tls -p 853 -d ./queryfile-example -s 8.8.8.8
-RUN resperf-report -c 5 -r 5 -m 5 -M udp -p  53 -d ./queryfile-example -s 8.8.8.8
-RUN resperf-report -c 5 -r 5 -m 5 -M tcp -p  53 -d ./queryfile-example -s 8.8.8.8
-RUN resperf-report -c 5 -r 5 -m 5 -M tls -p 853 -d ./queryfile-example -s 8.8.8.8
-RUN flame -l 5 -Q 5 -P udp    -p  53 8.8.8.8
-RUN flame -l 5 -Q 5 -P tcp    -p  53 8.8.8.8
-RUN flame -l 5 -Q 5 -P tcptls -p 853 8.8.8.8
+RUN dnsperf -l 2 -Q 1 -m udp -p  53 -d ./queryfile-example -s 8.8.8.8
+RUN dnsperf -l 2 -Q 1 -m tcp -p  53 -d ./queryfile-example -s 8.8.8.8
+RUN dnsperf -l 2 -Q 1 -m tls -p 853 -d ./queryfile-example -s 8.8.8.8
+RUN resperf-report -c 2 -r 1 -m 1 -M udp -p  53 -d ./queryfile-example -s 8.8.8.8
+RUN resperf-report -c 2 -r 1 -m 1 -M tcp -p  53 -d ./queryfile-example -s 8.8.8.8
+RUN resperf-report -c 2 -r 1 -m 1 -M tls -p 853 -d ./queryfile-example -s 8.8.8.8
+RUN flame -l 2 -Q 1 -c 1 -P udp    -p  53 8.8.8.8
+RUN flame -l 2 -Q 1 -c 1 -P tcp    -p  53 8.8.8.8
+RUN flame -l 2 -Q 1 -c 1 -P tcptls -p 853 8.8.8.8
 
 ##################################################
 ## "main" stage
