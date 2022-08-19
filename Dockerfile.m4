@@ -4,7 +4,7 @@ m4_changequote([[, ]])
 ## "build" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:20.04]], [[FROM docker.io/ubuntu:20.04]]) AS build
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS build
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Install system packages
@@ -16,6 +16,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		automake \
 		build-essential \
 		ca-certificates \
+		cmake \
 		devscripts \
 		file \
 		git \
@@ -38,23 +39,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		pkgconf \
 		tzdata \
 	&& rm -rf /var/lib/apt/lists/*
-
-# Build CMake with "_FILE_OFFSET_BITS=64"
-# (as a workaround for: https://gitlab.kitware.com/cmake/cmake/-/issues/20568)
-WORKDIR /tmp/
-RUN export DEBIAN_FRONTEND=noninteractive \
-	&& apt-get update \
-	&& apt-get build-dep -y cmake \
-	&& apt-get source cmake \
-	&& mv ./cmake-*/ ./cmake/ \
-	&& rm -rf /var/lib/apt/lists/*
-WORKDIR /tmp/cmake/
-RUN DEB_BUILD_PROFILES='stage1' \
-	DEB_BUILD_OPTIONS='parallel=auto nocheck' \
-	DEB_CFLAGS_SET='-D _FILE_OFFSET_BITS=64' \
-	DEB_CXXFLAGS_SET='-D _FILE_OFFSET_BITS=64' \
-	debuild -b -uc -us
-RUN dpkg -i /tmp/cmake_*.deb /tmp/cmake-data_*.deb
 
 # Build dnsperf and resperf
 ARG DNSPERF_TREEISH=v2.9.0
@@ -88,7 +72,7 @@ RUN file /usr/bin/flame
 ## "base" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:20.04]], [[FROM docker.io/ubuntu:20.04]]) AS base
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS base
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Install system packages
@@ -102,19 +86,19 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		libbind9-161 \
 		libcap2 \
 		libck0 \
-		libdns1109 \
+		libdns1110 \
 		libfstrm0 \
 		libgeoip1 \
 		libgnutls30 \
 		libisc1105 \
 		libisccfg163 \
-		libjson-c4 \
+		libjson-c5 \
 		libkrb5-3 \
-		libldns2 \
+		libldns3 \
 		liblmdb0 \
 		libnghttp2-14 \
 		libprotobuf-c1 \
-		libssl1.1 \
+		libssl3 \
 		libuv1 \
 		libxml2 \
 		tzdata \
