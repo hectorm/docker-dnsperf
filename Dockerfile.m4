@@ -41,7 +41,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Build dnsperf and resperf
-ARG DNSPERF_TREEISH=v2.9.0
+ARG DNSPERF_TREEISH=v2.10.0
 ARG DNSPERF_REMOTE=https://github.com/DNS-OARC/dnsperf.git
 WORKDIR /tmp/dnsperf/
 RUN git clone "${DNSPERF_REMOTE:?}" ./
