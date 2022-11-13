@@ -68,6 +68,15 @@ RUN make -j"$(nproc)"
 RUN mv ./flame /usr/bin/flame
 RUN file /usr/bin/flame
 
+# Download sample query data
+ARG SAMPLE_QUERY_DATA_TREEISH=b7d520e380452fafcf6c3394bfb1ab4118cf783a
+ARG SAMPLE_QUERY_DATA_REMOTE=https://github.com/DNS-OARC/sample-query-data.git
+WORKDIR /tmp/sample-query-data/
+RUN git clone "${SAMPLE_QUERY_DATA_REMOTE:?}" ./
+RUN git checkout "${SAMPLE_QUERY_DATA_TREEISH:?}"
+RUN git submodule update --init --recursive
+RUN for f in ./queryfile-example-*.xz; do xz -dc "${f:?}" && rm -f "${f:?}"; done > ./queryfile-example
+
 ##################################################
 ## "base" stage
 ##################################################
@@ -123,13 +132,11 @@ COPY --from=build --chown=root:root /usr/bin/dnsperf /usr/bin/dnsperf
 COPY --from=build --chown=root:root /usr/bin/resperf /usr/bin/resperf
 COPY --from=build --chown=root:root /usr/bin/resperf-report /usr/bin/resperf-report
 COPY --from=build --chown=root:root /usr/bin/flame /usr/bin/flame
+COPY --from=build --chown=root:root /tmp/sample-query-data/queryfile-example /home/dnsperf/queryfile-example
 
 # Switch to unprivileged user
 USER dnsperf:dnsperf
 WORKDIR /home/dnsperf/
-
-# Add sample query file
-ADD ./data/queryfile-example.tar.xz /home/dnsperf/
 
 ##################################################
 ## "test" stage
