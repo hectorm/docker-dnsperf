@@ -5,7 +5,6 @@ m4_changequote([[, ]])
 ##################################################
 
 m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS build
-m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Install system packages
 RUN export DEBIAN_FRONTEND=noninteractive \
@@ -81,7 +80,6 @@ RUN for f in ./queryfile-example-*.xz; do xz -dc "${f:?}" && rm -f "${f:?}"; don
 ##################################################
 
 m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS base
-m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Install system packages
 RUN export DEBIAN_FRONTEND=noninteractive \
@@ -142,7 +140,6 @@ WORKDIR /home/dnsperf/
 ##################################################
 
 FROM base AS test
-m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 RUN dnsperf -l 2 -Q 1 -m udp -p  53 -d ./queryfile-example -s 8.8.8.8
 RUN dnsperf -l 2 -Q 1 -m tcp -p  53 -d ./queryfile-example -s 8.8.8.8
