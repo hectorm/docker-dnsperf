@@ -90,18 +90,18 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		gnuplot \
 		knot-dnsutils \
 		libcap2 \
-		libck0 \
+		libck0t64 \
 		libfstrm0 \
-		libgeoip1 \
-		libgnutls30 \
+		libgeoip1t64 \
+		libgnutls30t64 \
 		libjson-c5 \
 		libkrb5-3 \
-		libldns3 \
+		libldns3t64 \
 		liblmdb0 \
 		libnghttp2-14 \
 		libprotobuf-c1 \
-		libssl3 \
-		libuv1 \
+		libssl3t64 \
+		libuv1t64 \
 		libxml2 \
 		tzdata \
 	&& rm -rf /var/lib/apt/lists/*
