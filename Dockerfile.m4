@@ -4,7 +4,7 @@ m4_changequote([[, ]])
 ## "build" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS build
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:24.04]], [[FROM docker.io/ubuntu:24.04]]) AS build
 
 # Install system packages
 RUN export DEBIAN_FRONTEND=noninteractive \
@@ -79,7 +79,7 @@ RUN for f in ./queryfile-example-*.xz; do xz -dc "${f:?}" && rm -f "${f:?}"; don
 ## "base" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS base
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:24.04]], [[FROM docker.io/ubuntu:24.04]]) AS base
 
 # Install system packages
 RUN export DEBIAN_FRONTEND=noninteractive \
@@ -89,15 +89,11 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		curl \
 		gnuplot \
 		knot-dnsutils \
-		libbind9-161 \
 		libcap2 \
 		libck0 \
-		libdns1110 \
 		libfstrm0 \
 		libgeoip1 \
 		libgnutls30 \
-		libisc1105 \
-		libisccfg163 \
 		libjson-c5 \
 		libkrb5-3 \
 		libldns3 \
@@ -110,19 +106,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		tzdata \
 	&& rm -rf /var/lib/apt/lists/*
 
-# Create users and groups
-ARG DNSPERF_USER_UID=1000
-ARG DNSPERF_USER_GID=1000
-RUN groupadd \
-		--gid "${DNSPERF_USER_GID:?}" \
-		dnsperf
-RUN useradd \
-		--uid "${DNSPERF_USER_UID:?}" \
-		--gid "${DNSPERF_USER_GID:?}" \
-		--shell "$(command -v bash)" \
-		--home-dir /home/dnsperf/ \
-		--create-home \
-		dnsperf
+# Create unprivileged user
+RUN userdel -rf "$(id -nu 1000)" && useradd -u 1000 -g 0 -s "$(command -v bash)" -m dnsperf
 
 # Copy dnsperf, resperf and flame binaries
 COPY --from=build --chown=root:root /usr/bin/dnsperf /usr/bin/dnsperf
@@ -131,8 +116,9 @@ COPY --from=build --chown=root:root /usr/bin/resperf-report /usr/bin/resperf-rep
 COPY --from=build --chown=root:root /usr/bin/flame /usr/bin/flame
 COPY --from=build --chown=root:root /tmp/sample-query-data/queryfile-example /home/dnsperf/queryfile-example
 
-# Switch to unprivileged user
-USER dnsperf:dnsperf
+# Drop root privileges
+USER dnsperf:root
+
 WORKDIR /home/dnsperf/
 
 ##################################################
